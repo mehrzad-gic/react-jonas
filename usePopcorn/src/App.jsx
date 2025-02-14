@@ -9,8 +9,9 @@ import WatchedSummary from './components/WatchedSummary'; // Fixed typo
 import MovieDetail from './components/MovieDetail';
 
 function App() {
+
   const [movies, setMovies] = useState([]); // Initialize as an empty array
-  const [watched, setWatched] = useState(tempWatchedData);
+  const [watched, setWatched] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const [query, setQuery] = useState('');
@@ -54,7 +55,7 @@ function App() {
 
         <Box>
           {selectedMovie ? (
-            <MovieDetail selectedMovie={selectedMovie} setSelectedMovie={setSelectedMovie} />
+            <MovieDetail watched={watched} setWatched={setWatched} selectedMovie={selectedMovie} setSelectedMovie={setSelectedMovie} />
           ) : (
             <>
               <WatchedSummary watched={watched} /> {/* Pass watched data */}
