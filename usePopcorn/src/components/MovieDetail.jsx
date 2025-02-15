@@ -66,8 +66,20 @@ export default function MovieDetail({ watched,setWatched,selectedMovie,setSelect
 
     }
 
-    async function deleteFromList(params) {
-        
+    function deleteFromList() {
+
+        try{
+
+            setIsLoading(true);
+            const watchedListAfterDelete = watched.filter((val) => val.Title != movie.Title)
+            setWatched(watchedListAfterDelete)
+
+        } catch (e){
+            setError(e.message);
+            console.log(e.message);
+        } finally {
+            setIsLoading(false);
+        }
 
     }
 
