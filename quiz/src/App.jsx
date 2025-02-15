@@ -3,10 +3,12 @@ import Header from './components/Header';
 import Main from './components/Main';
 import Loader from './components/Loader';
 import Error from './components/Error';
+import Start from './components/Start';
+import Question from './components/Question';
 
 const initialState = {
   questions: null,
-  selectedQuestion: null,
+  currentQuestion: null,
   status: null, // loading, error, ready, active, finished
   errorMessage: null,
 };
@@ -47,6 +49,13 @@ function reducer(state, action) {
         status: "finished",
       };
 
+    
+    case "index":
+      return {
+        ...state,
+        currentQuestion: action.payload, // Update the selected question index
+      };
+
     default:
       return {
         ...state,
@@ -59,7 +68,7 @@ function reducer(state, action) {
 
 function App() {
 
-  const [{ status, questions, errorMessage }, dispatch] = useReducer(reducer, initialState);
+  const [{ status, questions, errorMessage, currentQuestion }, dispatch] = useReducer(reducer, initialState);
 
   useEffect(() => {
 
@@ -118,11 +127,14 @@ function App() {
 
         {errorMessage && <Error message={errorMessage} />}
 
-        {status === 'ready' && (
+        {status == 'ready' && questions?.length > 0 && (
           <Main>
-            <h1>hi</h1>
+            <Start dispatch={dispatch} numQuestions={questions.length}/>
           </Main>
         )}
+
+        {status == 'active' && <Question questions={questions} dispatch={dispatch} currentQuestion={currentQuestion}/>}
+
       </div>
 
     </>
