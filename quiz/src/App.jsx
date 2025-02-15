@@ -115,7 +115,7 @@ function App() {
 
   }, []);
 
-  console.log('Current state:', { status, questions, errorMessage });
+  console.log('Current state:', { status, questions, errorMessage,currentQuestion });
 
   return (
 
