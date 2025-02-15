@@ -33,14 +33,26 @@ export default function Option({dispatch, answer, option, question, doneQuestion
 
         if(correctValue == value) dispatch({type:"point",payload:question.points})
 
-        dispatch({type:'answer',payload:question.correctOption})
+        dispatch({type:'answer',payload:index})
 
     }
     
-    const style = answer ? answer == index ? 'correct' : 'wrong' : '';
+
+    let style = '';
+    let isAnswer = false;
+
+    if(answer == 0 || answer){
+        isAnswer = true
+        if(answer == index){
+            style += ' answer'
+            index === question.correctOption ? style += ' correct' : style += ' wrong';
+        } else{
+            index === question.correctOption ? style += ' correct' : style += ' wrong';
+        }
+    }
 
     return (
-        <button disabled={!!answer} className={`btn btn-option ${style}`} onClick={click}>{option}</button>
+        <button disabled={isAnswer} className={`btn btn-option ${style}`} onClick={click}>{option}</button>
     )
 
 }
