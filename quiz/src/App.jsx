@@ -2,6 +2,7 @@ import { useReducer, useEffect } from 'react';
 import Header from './components/Header';
 import Main from './components/Main';
 import Loader from './components/Loader';
+import Error from './components/Error';
 
 const initialState = {
   questions: null,
@@ -11,13 +12,13 @@ const initialState = {
 };
 
 function reducer(state, action) {
-
+  
   switch (action.type) {
 
     case "loading":
       return {
         ...state,
-        status: action.payload ? "loading" : "finished",
+        status: action.payload ? "loading" : "ready",
       };
 
     case "error":
@@ -58,7 +59,7 @@ function reducer(state, action) {
 
 function App() {
 
-  const [state, dispatch] = useReducer(reducer, initialState);
+  const [{ status, questions, errorMessage }, dispatch] = useReducer(reducer, initialState);
 
   useEffect(() => {
 
@@ -69,15 +70,18 @@ function App() {
       try {
 
         dispatch({ type: 'loading', payload: true });
+
         const data = await fetch(`http://localhost:5000/questions`, {
           signal: abortController.signal,
         });
+
         if (!data.ok) {
           dispatch({ type: 'error', payload: 'Something went wrong while fetching data' });
           return;
         }
 
         const res = await data.json();
+
         if (!res || res.length < 1) {
           dispatch({ type: 'error', payload: 'Data is not valid' });
           return;
@@ -102,30 +106,28 @@ function App() {
 
   }, []);
 
+  console.log('Current state:', { status, questions, errorMessage });
+
   return (
 
     <>
-
       <div className="app">
-
         <Header />
 
-        {state.status === 'loading' && <Loader />}
+        {status === 'loading' && <Loader />}
 
-        {state.status === 'error' && <p>{state.errorMessage}</p>}
+        {errorMessage && <Error message={errorMessage} />}
 
-        {state.status === 'ready' && (
+        {status === 'ready' && (
           <Main>
-            
+            <h1>hi</h1>
           </Main>
         )}
-
       </div>
 
     </>
-
+    
   );
-
 }
 
 export default App;
