@@ -11,6 +11,10 @@ const initialState = {
   currentQuestion: null,
   status: null, // loading, error, ready, active, finished
   errorMessage: null,
+  point:0,
+  time:null,
+  doneQuestions:null,
+  answer:null,
 };
 
 function reducer(state, action) {
@@ -56,6 +60,26 @@ function reducer(state, action) {
         currentQuestion: action.payload, // Update the selected question index
       };
 
+
+    case "point" : 
+      return{
+        ...state,
+        point : action.payload
+      };
+
+
+    case "addToDone" :
+      return {
+        ...state,
+        doneQuestions : action.payload
+      };
+
+    case 'answer':
+      return {...state,answer:action.payload}
+
+    case "reset":
+
+
     default:
       return {
         ...state,
@@ -68,7 +92,7 @@ function reducer(state, action) {
 
 function App() {
 
-  const [{ status, questions, errorMessage, currentQuestion }, dispatch] = useReducer(reducer, initialState);
+  const [{ status, questions, errorMessage, doneQuestions, currentQuestion, point, time, answer }, dispatch] = useReducer(reducer, initialState);
 
   useEffect(() => {
 
@@ -115,7 +139,7 @@ function App() {
 
   }, []);
 
-  console.log('Current state:', { status, questions, errorMessage,currentQuestion });
+  console.log('Current state:', { status, answer, questions, errorMessage,currentQuestion,point,time,doneQuestions });
 
   return (
 
@@ -133,7 +157,7 @@ function App() {
           </Main>
         )}
 
-        {status == 'active' && <Question questions={questions} dispatch={dispatch} currentQuestion={currentQuestion}/>}
+        {status == 'active' && <Question answer={answer} doneQuestions={doneQuestions} questions={questions} dispatch={dispatch} currentQuestion={currentQuestion}/>}
 
       </div>
 
