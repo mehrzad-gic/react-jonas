@@ -5,6 +5,9 @@ import Loader from './components/Loader';
 import Error from './components/Error';
 import Start from './components/Start';
 import Question from './components/Question';
+import NextButton from './components/NextButton';
+import Progress from './components/Progress';
+import Finish from './components/Finish';
 
 const initialState = {
   questions: null,
@@ -64,7 +67,7 @@ function reducer(state, action) {
     case "point" : 
       return{
         ...state,
-        point : action.payload
+        point : state.point+action.payload
       };
 
 
@@ -77,8 +80,13 @@ function reducer(state, action) {
     case 'answer':
       return {...state,answer:action.payload}
 
-    case "reset":
+    
+    case "next":
+      return {...state,currentQuestion : state.currentQuestion + 1,answer : null}
 
+
+    case "reset":
+      return {...initialState,questions:state.questions,status:'ready'}
 
     default:
       return {
@@ -104,7 +112,7 @@ function App() {
 
         dispatch({ type: 'loading', payload: true });
 
-        const data = await fetch(`http://localhost:5000/questions`, {
+        const data = await fetch(`http://localhost:5100/questions`, {
           signal: abortController.signal,
         });
 
@@ -139,13 +147,21 @@ function App() {
 
   }, []);
 
+
   console.log('Current state:', { status, answer, questions, errorMessage,currentQuestion,point,time,doneQuestions });
+
+  let totalPoints = 0;
+  if(questions) totalPoints = questions.reduce((accumulate,val) => accumulate + val.points ,0)
+      
 
   return (
 
     <>
       <div className="app">
+
         <Header />
+
+        {status == 'active' && <Progress point={point} length={questions.length} totalPoints={totalPoints} currentQuestion={currentQuestion} />}
 
         {status === 'loading' && <Loader />}
 
@@ -157,8 +173,14 @@ function App() {
           </Main>
         )}
 
-        {status == 'active' && <Question answer={answer} doneQuestions={doneQuestions} questions={questions} dispatch={dispatch} currentQuestion={currentQuestion}/>}
+        {status == 'active' && (<>
+          <Question answer={answer} doneQuestions={doneQuestions} questions={questions} dispatch={dispatch} currentQuestion={currentQuestion}/>
+          <NextButton dispatch={dispatch} answer={answer} length={questions.length} currentQuestion={currentQuestion}/>
+        </>)}
 
+        {status=='finished' && <Finish dispatch={dispatch} maxPossiblePoints={totalPoints} points={point} />}
+
+  
       </div>
 
     </>
