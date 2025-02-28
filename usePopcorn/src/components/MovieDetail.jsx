@@ -3,6 +3,7 @@ import Error from "./Error";
 import Loading from "./Loading";
 import { KEY } from '../utils'
 import StarRating from "./StarRating";
+import { addToLocalStorage, deleteFromLocalStorage } from "../assets/Helper";
 
 export default function MovieDetail({ watched,setWatched,selectedMovie,setSelectedMovie }) {
 
@@ -43,19 +44,15 @@ export default function MovieDetail({ watched,setWatched,selectedMovie,setSelect
     }, [selectedMovie])
 
 
-    async function addToList(params) {
+    async function addToList() {
 
         try{
-
-            setIsLoading(true)
-            const movie = await fetch(`https://www.omdbapi.com/?apikey=${KEY}&i=${selectedMovie}`)
-            if(!movie.ok) throw new error('Server Error')
-
-            const res = await movie.json();
-            if(!res) throw new error('Something went wrong while fetching data');
             
-            setWatched((current) => [...current,res])
+            setWatched((current) => [...current,movie])
+           
             setMessage("move added to list successfully");
+            
+            addToLocalStorage(movie);
 
         } catch (e){
             setError(e.message);
@@ -73,6 +70,7 @@ export default function MovieDetail({ watched,setWatched,selectedMovie,setSelect
             setIsLoading(true);
             const watchedListAfterDelete = watched.filter((val) => val.Title != movie.Title)
             setWatched(watchedListAfterDelete)
+            deleteFromLocalStorage(movie)
 
         } catch (e){
             setError(e.message);

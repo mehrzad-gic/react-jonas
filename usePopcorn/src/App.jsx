@@ -7,11 +7,12 @@ import Box from './components/Box';
 import Movies from './components/Movies';
 import WatchedSummary from './components/WatchedSummary'; // Fixed typo
 import MovieDetail from './components/MovieDetail';
+import { All } from './assets/Helper';
 
 function App() {
 
   const [movies, setMovies] = useState([]); // Initialize as an empty array
-  const [watched, setWatched] = useState([]);
+  const [watched, setWatched] = useState(All());
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const [query, setQuery] = useState('');
@@ -45,10 +46,15 @@ function App() {
     }
   }, [query]);
 
+
   return (
+
     <>
+    
       <Header setQuery={setQuery} movieslength={movies.length} />
+
       <Container>
+
         <Box>
           <Movies isLoading={isLoading} setSelectedMovie={setSelectedMovie} error={error} movies={movies} />
         </Box>
@@ -63,9 +69,13 @@ function App() {
             </>
           )}
         </Box>
+
       </Container>
+
     </>
+
   );
+
 }
 
 export default App;
